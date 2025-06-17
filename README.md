@@ -18,7 +18,7 @@
 Run the playbook with sudo password prompt:
 
 ```bash
-ansible-playbook -i hosts deploy_compiler_backend.yml --ask-become-pass
+ansible-playbook -i hosts deploy_compiler_backend.yml 
 ```
 
 ## 3. Post-Check Report
