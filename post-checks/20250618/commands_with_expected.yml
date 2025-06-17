@@ -1,0 +1,6 @@
+checks:
+  - command: curl -X GET http://localhost:8083/api/compiler/languages
+    expected: '["cpp","java"]'
+  - command: ls /home/jagansai/deployments/*.jar
+    expected: '/home/jagansai/deployments/compiler-backend.jar'
+# Add more checks as needed

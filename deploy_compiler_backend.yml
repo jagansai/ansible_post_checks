@@ -1,0 +1,93 @@
+- name: Deploy Compiler Backend Spring Boot Application
+  hosts: compiler_backend
+  vars:
+    app_jar_path: "/home/jagansai/code/java_code/CompilerExplorer/compiler-backend/target/compiler-backend-1.0.0-SNAPSHOT.jar"
+    dest_jar_path: "/home/jagansai/deployments/compiler-backend.jar"
+    app_user: "jagansai"
+  tasks:
+    - name: Ensure destination directory exists
+      file:
+        path: "/home/jagansai/deployments"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+      become: yes
+
+    - name: Copy Spring Boot JAR to server
+      copy:
+        src: "{{ app_jar_path }}"
+        dest: "{{ dest_jar_path }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+      become: yes
+
+    - name: Kill any process using port 8083
+      shell: |
+        fuser -k 8083/tcp || true
+      ignore_errors: yes
+      become: yes
+
+    - name: Start Spring Boot application as app_user
+      shell: "nohup java -jar {{ dest_jar_path }} > /home/jagansai/deployments/app.log 2>&1 &"
+      args:
+        chdir: "/home/jagansai/deployments"
+      async: 10
+      poll: 0
+      become: no
+      become_user: "{{ app_user }}"
+
+    - name: Ensure post-check directory exists
+      file:
+        path: "/home/jagansai/deployments/var"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+      become: yes
+
+    - name: Wait for server to be up before post-checks
+      uri:
+        url: http://localhost:8083/api/compiler/languages
+        method: GET
+        status_code: 200
+        return_content: no
+      register: wait_result
+      retries: 15
+      delay: 2
+      until: wait_result.status == 200
+
+    - name: Load post-checks with expected output
+      include_vars:
+        file: "{{ post_check_command_path | dirname }}/commands_with_expected.yml"
+        name: post_checks
+
+    - name: Run post-checks and collect results
+      vars:
+        results: []
+      block:
+        - name: Run each post-check command
+          shell: "{{ item.command }}"
+          register: post_check_result
+          ignore_errors: yes
+          loop: "{{ post_checks.checks }}"
+          loop_control:
+            label: "{{ item.command }}"
+
+        - name: Build results list
+          set_fact:
+            results: "{{ results + [{
+              'command': item.item.command,
+              'expected': item.item.expected,
+              'actual': (item.stdout | default('')),
+              'passed': (item.stdout | default('')) == item.item.expected
+            }] }}"
+          loop: "{{ post_check_result.results }}"
+
+    - name: Generate HTML report from results
+      template:
+        src: "{{ post_check_command_path | dirname }}/report_template.html.j2"
+        dest: "/home/jagansai/deployments/var/post_check_report.html"
+      vars:
+        results: "{{ results }}"

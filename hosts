@@ -1,0 +1,6 @@
+[compiler_backend]
+localhost ansible_connection=local
+
+[compiler_backend:vars]
+app_user=jagansai
+post_check_command_path="post-checks/20250618/commands_with_expected.yml"

@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>Post-Check Report</title>
+  <style>
+    table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #eee; }
+    .pass { background: #c8e6c9; }
+    .fail { background: #ffcdd2; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center">Post-Check Command Report</h2>
+  <table>
+    <tr>
+      <th>Command</th>
+      <th>Expected Output</th>
+      <th>Actual Output</th>
+      <th>Result</th>
+    </tr>
+    {% for row in results %}
+    <tr class="{{ 'pass' if row.passed else 'fail' }}">
+      <td><pre>{{ row.command }}</pre></td>
+      <td><pre>{{ row.expected }}</pre></td>
+      <td><pre>{{ row.actual }}</pre></td>
+      <td>{{ 'PASS' if row.passed else 'FAIL' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
