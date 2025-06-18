@@ -3,4 +3,13 @@ checks:
     expected: '["cpp","java"]'
   - command: ls /home/jagansai/deployments/*.jar
     expected: '/home/jagansai/deployments/compiler-backend.jar'
+  - command: tree /home/jagansai/deployments/
+    expected: |
+      deployments/
+      ├── app.log
+      ├── compiler-backend.jar
+      └── var
+          └── post_check_report.html
+
+      2 directories, 3 files  
 # Add more checks as needed
