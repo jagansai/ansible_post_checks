@@ -23,10 +23,7 @@ ansible-playbook -i hosts deploy_compiler_backend.yml
 
 ## 3. Post-Check Report
 
-The latest post-check report is generated at:
 
-```
-/home/jagansai/deployments/var/post_check_report.html 
-```
+[`resources/post_check_report.html`](resources/post_check_report.html)
 
 You can open this file in your browser to view the results of all post-deployment checks.

@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>Post-Check Report</title>
+  <style>
+    table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #eee; }
+    .pass { background: #c8e6c9; }
+    .fail { background: #ffcdd2; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center">Post-Check Command Report</h2>
+  <table>
+    <tr>
+      <th>Command</th>
+      <th>Expected Output</th>
+      <th>Actual Output</th>
+      <th>Result</th>
+    </tr>
+        <tr class="pass">
+      <td><pre>curl -X GET http://localhost:8083/api/compiler/languages</pre></td>
+      <td><pre>["cpp","java"]</pre></td>
+      <td><pre>["cpp","java"]</pre></td>
+      <td>PASS</td>
+    </tr>
+        <tr class="pass">
+      <td><pre>ls /home/jagansai/deployments/*.jar</pre></td>
+      <td><pre>/home/jagansai/deployments/compiler-backend.jar</pre></td>
+      <td><pre>/home/jagansai/deployments/compiler-backend.jar</pre></td>
+      <td>PASS</td>
+    </tr>
+        <tr class="fail">
+      <td><pre>tree /home/jagansai/deployments/</pre></td>
+      <td><pre>deployments/
+├── app.log
+├── compiler-backend.jar
+└── var
+    └── post_check_report.html
+
+2 directories, 3 files  
+</pre></td>
+      <td><pre>/home/jagansai/deployments/
+├── app.log
+├── compiler-backend.jar
+└── var
+
+2 directories, 2 files</pre></td>
+      <td>FAIL</td>
+    </tr>
+      </table>
+</body>
+</html>
