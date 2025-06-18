@@ -24,6 +24,4 @@ ansible-playbook -i hosts deploy_compiler_backend.yml
 ## 3. Post-Check Report
 
 
-[`resources/post_check_report.html`](resources/post_check_report.html)
-
-You can open this file in your browser to view the results of all post-deployment checks.
+![Post Check Report Screenshot](resource/post_checks.jpeg)
