@@ -87,7 +87,7 @@
 
     - name: Generate HTML report from results
       template:
-        src: "{{ post_check_command_path | dirname }}/report_template.html.j2"
+        src: "./report_template.html.j2"
         dest: "/home/jagansai/deployments/var/post_check_report.html"
       vars:
         results: "{{ results }}"
