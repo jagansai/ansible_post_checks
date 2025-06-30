@@ -1,0 +1,5 @@
+checks:
+  - command: echo "Base command 1"
+    expected: "Base command 1"
+  - command: echo "Base command 2"
+    expected: "Base command 2"

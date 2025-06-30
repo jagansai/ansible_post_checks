@@ -58,10 +58,19 @@
       delay: 2
       until: wait_result.status == 200
 
+    - name: Load base post-check commands
+      include_vars:
+        file: "{{ playbook_dir }}/post-checks/base_commands.yml"
+        name: base
+
     - name: Load post-checks with expected output
       include_vars:
         file: "{{ post_check_command_path | dirname }}/commands_with_expected.yml"
-        name: post_checks
+        name: child
+
+    - name: Merge base and child checks
+      set_fact:
+        all_checks: "{{ (base.checks | default([])) + (child.checks | default([])) }}"
 
     - name: Run post-checks and collect results
       vars:
@@ -71,7 +80,7 @@
           shell: "{{ item.command }}"
           register: post_check_result
           ignore_errors: yes
-          loop: "{{ post_checks.checks }}"
+          loop: "{{ all_checks }}"
           loop_control:
             label: "{{ item.command }}"
 
